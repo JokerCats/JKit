@@ -23,7 +23,6 @@ import java.util.ArrayList;
 public abstract class BaseVMFragment<V extends ViewDataBinding, VM extends BaseViewModel, D> extends Fragment implements Observer {
     protected VM viewModel;
     protected V dataBinding;
-    protected String mFragmentTag = "";
     protected CenterToast mToastMaster;
 
     public abstract int getBindingVariable();

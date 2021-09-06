@@ -4,20 +4,20 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import net.jkcat.core.R;
 import net.jkcat.core.model.BaseModel;
 import net.jkcat.core.model.PagingResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseViewModel<M extends BaseModel<?, ?>, D> extends ViewModel implements LifecycleObserver, IBaseModelListener<List<D>> {
-    protected M model;
-    public MutableLiveData<List<D>> dataBox = new MutableLiveData<>();
+public abstract class BaseViewModel<R> extends ViewModel implements LifecycleObserver, IBaseModelListener<R> {
+    protected BaseModel<R> model;
+    public MutableLiveData<R> dataBox = new MutableLiveData<>();
     public MutableLiveData<ViewStatus> viewStatus = new MutableLiveData<>();
     public MutableLiveData<String> errorMsg = new MutableLiveData<>();
 
     public BaseViewModel() {
-        dataBox.setValue(new ArrayList<>());
         viewStatus.setValue(ViewStatus.LOADING);
         errorMsg.setValue("");
     }
@@ -43,45 +43,46 @@ public abstract class BaseViewModel<M extends BaseModel<?, ?>, D> extends ViewMo
     }
 
     @Override
-    public void onLoadSuccess(BaseModel<?, List<D>> model, List<D> data, PagingResult... pageInfo) {
-        if (model == this.model) {
-            if (model.isPaging()) {
-                if (pageInfo[0].isFirstPage) {
-                    dataBox.getValue().clear();
-                }
-
-                if (pageInfo[0].isEmpty) {
-                    if (pageInfo[0].isFirstPage) {
-                        viewStatus.setValue(ViewStatus.EMPTY);
-                    } else {
-                        viewStatus.setValue(ViewStatus.NO_MORE_DATA);
-                    }
-                } else {
-                    dataBox.getValue().addAll(data);
-                    dataBox.postValue(dataBox.getValue());
-                    viewStatus.setValue(ViewStatus.NORMAL);
-                }
-            } else {
-                dataBox.getValue().clear();
-                dataBox.setValue(data);
-                dataBox.postValue(dataBox.getValue());
-                viewStatus.setValue(ViewStatus.NORMAL);
-            }
-            viewStatus.postValue(viewStatus.getValue());
+    public void onLoadSuccess(R data, PagingResult... pageInfo) {
+        if (model.isPaging()) {
+//            if (pageInfo[0].isFirstPage) {
+//                List<D> value = dataBox.getValue();
+//                if (value != null && !value.isEmpty()) {
+//                    dataBox.getValue().clear();
+//                }
+//            }
+//
+//            if (pageInfo[0].isEmpty) {
+//                if (pageInfo[0].isFirstPage) {
+//                    viewStatus.setValue(ViewStatus.EMPTY);
+//                } else {
+//                    viewStatus.setValue(ViewStatus.NO_MORE_DATA);
+//                }
+//            } else {
+//                List<D> value = dataBox.getValue();
+//                if (value != null && !value.isEmpty()) {
+//                    dataBox.getValue().addAll(data);
+//                    dataBox.postValue(dataBox.getValue());
+//                }
+//                viewStatus.setValue(ViewStatus.NORMAL);
+//            }
+        } else {
+            dataBox.setValue(data);
+            dataBox.postValue(dataBox.getValue());
+            viewStatus.setValue(ViewStatus.NORMAL);
         }
+        viewStatus.postValue(viewStatus.getValue());
     }
 
     @Override
-    public void onLoadFailure(BaseModel<?, List<D>> model, String prompt, PagingResult... pageInfo) {
+    public void onLoadFailure(String prompt, PagingResult... pageInfo) {
         errorMsg.setValue(prompt);
-        if (model == this.model) {
-            if (model.isPaging() && !pageInfo[0].isFirstPage) {
-                viewStatus.setValue(ViewStatus.LOAD_MORE_FAILED);
-            } else {
-                viewStatus.setValue(ViewStatus.REFRESH_FAILED);
-            }
-            viewStatus.postValue(viewStatus.getValue());
+        if (model.isPaging() && !pageInfo[0].isFirstPage) {
+            viewStatus.setValue(ViewStatus.LOAD_MORE_FAILED);
+        } else {
+            viewStatus.setValue(ViewStatus.REFRESH_FAILED);
         }
+        viewStatus.postValue(viewStatus.getValue());
     }
 
 }

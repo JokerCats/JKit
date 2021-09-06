@@ -1,12 +1,11 @@
 package net.jkcat.core.vm;
 
-import net.jkcat.core.model.BaseModel;
 import net.jkcat.core.model.PagingResult;
 
-public interface IBaseModelListener<T> {
+public interface IBaseModelListener<R> {
 
-    void onLoadSuccess(BaseModel<?, T> model, T data, PagingResult... pageInfo);
+    void onLoadSuccess(R response, PagingResult... pageInfo);
 
-    void onLoadFailure(BaseModel<?, T> model, String prompt, PagingResult... pageInfo);
+    void onLoadFailure(String prompt, PagingResult... pageInfo);
 
 }

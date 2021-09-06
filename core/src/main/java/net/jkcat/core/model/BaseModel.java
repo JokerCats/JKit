@@ -14,12 +14,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
-public abstract class BaseModel<R, T> implements IBaseModelObserver<R> {
+public abstract class BaseModel<R> implements IBaseModelObserver<R> {
 
     private final int INIT_PAGE_NUMBER;
 
@@ -29,7 +28,7 @@ public abstract class BaseModel<R, T> implements IBaseModelObserver<R> {
     private final String mPredefinedData;
     private BaseCacheData<R> mCacheData;
 
-    protected WeakReference<IBaseModelListener<T>> mReferenceModelListener;
+    protected WeakReference<IBaseModelListener<R>> mReferenceModelListener;
 
     private boolean mIsLoading;
     private CompositeDisposable compositeDisposable;
@@ -65,10 +64,11 @@ public abstract class BaseModel<R, T> implements IBaseModelObserver<R> {
     /**
      * 注册监听
      */
-    public void register(IBaseModelListener<T> listener) {
+    public BaseModel<R> register(IBaseModelListener<R> listener) {
         if (listener != null) {
             mReferenceModelListener = new WeakReference<>(listener);
         }
+        return this;
     }
 
     /**
@@ -167,17 +167,15 @@ public abstract class BaseModel<R, T> implements IBaseModelObserver<R> {
     /**
      * 发送消息给 UI 线程
      */
-    protected void notifyResultToListeners(R response, T data, boolean isFromCache) {
-        IBaseModelListener<T> listener = mReferenceModelListener.get();
+    protected void notifyResultToListeners(R response, boolean isFromCache) {
+        IBaseModelListener<R> listener = mReferenceModelListener.get();
         if (listener != null) {
             if (isPaging()) {
-                listener.onLoadSuccess(this, data,
-                        isFromCache ? new PagingResult(false, true, true) :
-                                new PagingResult(data == null ? true : ((List) data).isEmpty(),
-                                        pageNumber == INIT_PAGE_NUMBER,
-                                        data == null ? false : ((List) data).size() > 0));
+                listener.onLoadSuccess(response,
+                        isFromCache ? new PagingResult(false, true) :
+                                new PagingResult(response == null, pageNumber == INIT_PAGE_NUMBER));
             } else {
-                listener.onLoadSuccess(this, data);
+                listener.onLoadSuccess(response);
             }
         }
 
@@ -187,7 +185,7 @@ public abstract class BaseModel<R, T> implements IBaseModelObserver<R> {
             }
 
             if (!isFromCache) {
-                if (data instanceof List && ((List) data).size() > 0) {
+                if (response != null) {
                     pageNumber += 1;
                 }
             }
@@ -203,12 +201,12 @@ public abstract class BaseModel<R, T> implements IBaseModelObserver<R> {
     }
 
     protected void loadFail(final String errorMsg) {
-        IBaseModelListener<T> listener = mReferenceModelListener.get();
+        IBaseModelListener<R> listener = mReferenceModelListener.get();
         if (listener != null) {
             if (isPaging()) {
-                listener.onLoadFailure(BaseModel.this, errorMsg, new PagingResult(true, true, false));
+                listener.onLoadFailure(errorMsg, new PagingResult(true, true));
             } else {
-                listener.onLoadFailure(BaseModel.this, errorMsg);
+                listener.onLoadFailure(errorMsg);
             }
         }
         mIsLoading = false;

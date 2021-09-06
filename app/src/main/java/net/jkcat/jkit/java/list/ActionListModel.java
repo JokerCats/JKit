@@ -12,7 +12,7 @@ import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 
-public class ActionListModel extends BaseModel<ActionListResult, List<ActionListResult.ActionEntity.ActionBean>> {
+public class ActionListModel extends BaseModel<ActionListResult> {
 
     private static final String CACHE_KEY_ACTION_LIST = "cache_key_action_list";
 
@@ -45,7 +45,7 @@ public class ActionListModel extends BaseModel<ActionListResult, List<ActionList
 
     @Override
     public void onSuccess(ActionListResult response, boolean isFromCache) {
-        notifyResultToListeners(response, response.page.list, isFromCache);
+        notifyResultToListeners(response, isFromCache);
     }
 
     @Override
