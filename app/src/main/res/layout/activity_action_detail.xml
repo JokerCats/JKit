@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="net.jkcat.jkit.java.activity.ActionDetailResult" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/view_10_dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="10dp">
+
+            <!-- 活动封面 -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_action_cover"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/view_10_dp"
+                android:scaleType="fitCenter"
+                app:imageUrl="@{viewModel.activity.coverImg}" />
+
+            <!-- 活动标题 -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_action_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/view_10_dp"
+                android:text="@{`活动标题：` + viewModel.activity.title}"
+                tools:text="活动标题" />
+
+            <!-- 活动地点 -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_action_place"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/view_10_dp"
+                android:text="@{`活动地点：` + viewModel.activity.position}"
+                tools:text="活动地点" />
+
+            <!-- 活动时间 -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_action_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/view_10_dp"
+                android:text="@{`活动时间：` + viewModel.activity.startTime}"
+                tools:text="活动时间" />
+
+            <!-- 报名人数 -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_action_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/view_10_dp"
+                android:text="@{`报名人数：`+ viewModel.activity.number}"
+                android:visibility="@{viewModel.activity.number.equals(18)}"
+                tools:text="报名人数" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

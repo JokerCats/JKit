@@ -1,0 +1,7 @@
+include ':core'
+include ':news'
+include ':common'
+include ':updater'
+include ':network'
+include ':app'
+rootProject.name = "JKit"

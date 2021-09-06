@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">JKit</string>
+
+    <string name="tx_demo_activity">demo_activity</string>
+    <string name="tx_demo_fragment">demo_fragment</string>
+    <string name="tx_demo_list">demo_list</string>
+
+    <string name="tx_action_sign">报名</string>
+</resources>
